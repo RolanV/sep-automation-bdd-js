@@ -2,6 +2,7 @@ import { LeftMainPage } from "./pages/LeftMainPage.js";
 import { PaymentPlanPage } from "./pages/PaymentPlanPage.js";
 import { StartApplicationPage } from "./pages/StartApplicationPage.js";
 import { ReviewPaymentPage } from "./pages/ReviewPaymentPage.js";
+import { type } from "os";
 
 // Import OTHER PAGES CLASSES HERE IF NEEDED...
 
