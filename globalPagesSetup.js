@@ -15,7 +15,7 @@ export let leftMainPage;
 /**
  * @type {import('./pages/PaymentPlanPage.js').PaymentPlanPage}
  */
-export let paymentPlanPage;
+export let paymentPlanPage; 
 
 /**
  * @type {import('./pages/StartApplicationPage.js').StartApplicationPage}
