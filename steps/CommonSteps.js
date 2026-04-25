@@ -24,3 +24,8 @@ Given("user completed the start application step", async function () {
   // await page.waitForTimeout(5000);
 });
 
+
+Given("user has completed payment plan step", async function () {
+    await paymentPlanPage.selectPaymentPlan("upfront");
+    await paymentPlanPage.clickNextButton();
+});

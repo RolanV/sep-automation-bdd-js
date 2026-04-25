@@ -16,7 +16,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
         Given user is on the enrollment page
         And user completed the start application step
 
-    @sep16-1 @regression
+    @sep16-1 @regression @smoke
     #* AC1: Clicking on any plan should activate the next button
     Scenario Outline: Verify that clicking on any payment plan should activate the next button
         Then the next button is disabled by default
@@ -50,7 +50,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
         Then the installments payment plan summary is displayed
 
 
-    @sep16-4 @regression
+    @sep16-4 @regression @smoke
     #* AC6: The back button should be displayed and enabled.
     Scenario: Verify that back button should be displayed and enabled.
         Then the back button is displayed and enabled
