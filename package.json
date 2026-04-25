@@ -1,12 +1,11 @@
-
 {
   "name": "sep-automation",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "npx cucumber-js",
-    "test:tag": "npx cucumber-js --tags @sep11",
-    "test:tag:dryrun": "npx cucumber-js --tags @tagName --dry-run",
+    "test:tag": "npx cucumber-js --tags @sep16",
+    "test:tag:dryrun": "npx cucumber-js --tags @sep16 --dry-run",
     "test:smoke": "npx cucumber-js --tags @smoke",
     "Mac-open:report": "open reports/cucumber-report.html",
     "Windows-open:report": "start reports/cucumber-report.html"
@@ -17,6 +16,7 @@
   "description": "",
   "type": "module",
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
     "@playwright/test": "^1.53.2",
     "@types/node": "^22.16.0"
   },

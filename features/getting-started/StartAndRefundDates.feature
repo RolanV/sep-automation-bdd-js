@@ -11,12 +11,12 @@ Feature: Program start dates and Refund dates
     Background:
         Given user is on the enrollment page
 
-    @sep11-1
+    @sep11-1 @regression
     Scenario: Verify that the program start date and refund date are displayed
         Then the program start date should be displayed
         And the program refund date should be displayed
 
-    @sep11-2
+    @sep11-2 @regression
     Scenario: Verify that the program start date and refund date are accurate
         Then the program start date should be accurate according to the program schedule
         And the program refund date should be accurate according to the program schedule
