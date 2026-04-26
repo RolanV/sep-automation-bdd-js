@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 const BROWSER_TYPE = "chrome";
-const HEADLESS_MODE = false;
+const HEADLESS_MODE = true;
 const MAXIMIZED_WINDOW = true;
 const SLOW_MOTION_DELAY = 0; // slow mode in milliseconds
 const DEFAULT_TIMEOUT = 30000; // default timeout in milliseconds
