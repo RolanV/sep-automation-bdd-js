@@ -42,7 +42,6 @@ export class StartApplicationPage extends BasePage {
       "//mat-label[text()='How did you hear about us?']",
     );
 
-
     this.emailOptionFromDropDown = page.locator(
       "//mat-option/span[contains(text(), 'Email')]",
     );
@@ -109,9 +108,7 @@ export class StartApplicationPage extends BasePage {
       "//div[@class='col-sm']/b[@class = 'info-primary']",
     );
 
-    this.footer = page.locator(
-      "//p[@class = 'footer-text' and contains(text(), 'Need help?')]",
-    );
+    this.footer = page.locator("(//p[@class = 'footer-text' and contains(text(), 'Need help?')])[1]");
 
     this.nextButton = page.locator(
       "//button[@class = 'next-button'][contains(text(), 'Next')]",
@@ -133,7 +130,11 @@ export class StartApplicationPage extends BasePage {
     this.paymentPlanStepCircleText = page.locator("//div[.='Payment plan']");
     this.reviewStepCircleText = page.locator("//div[.='Review']");
 
-    this.phoneNumberInputBox_VerificationColor = page.locator('[formcontrolname="phoneNumber"]');
+    this.phoneNumberInputBox_VerificationColor = page.locator(
+      '[formcontrolname="phoneNumber"]',
+    );
+
+  
   }
 
   /**
@@ -201,7 +202,7 @@ export class StartApplicationPage extends BasePage {
    * @param {string} color    // blue, green, grey
    * @param {string} cssProperty //border-top-color, background-color (default)
    */
-  
+
   async verifyStepperColor(stepper, color, cssProperty = "background-color") {
     // Step mapping
     const steps = {
