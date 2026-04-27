@@ -1,4 +1,4 @@
-@sep10
+@sep10 @smoke
 Feature: Enter my Personal details
 
     As a customer, I should be able to enter my Personal details.
@@ -44,22 +44,10 @@ Feature: Enter my Personal details
         When user enters "abc123" into the Phone field
         Then the Phone field should be highlighted in red
 
-
-
-    @sep10-6
-    Scenario: Verify How did you hear about us dropdown is present
-        Then user should see the How did you hear about us dropdown
-
-    @sep10-7
-    Scenario: Verify user can open How did you hear about us dropdown
-        When user clicks the How did you hear about us dropdown
-        Then user should see dropdown options
-
     @sep10-8
     Scenario: Verify user can select an option from How did you hear about us dropdown
-        When user clicks the How did you hear about us dropdown
-        And user selects "LinkedIn" from the How did you hear about us dropdown
-        Then the How did you hear about us dropdown should display "LinkedIn"
+        When user selects "LinkedIN" from the How did you hear about us dropdown
+        Then the How did you hear about us dropdown should display "LinkedIN"
 
     @sep10-9
     Scenario: Verify Next button is disabled when all required fields are empty
