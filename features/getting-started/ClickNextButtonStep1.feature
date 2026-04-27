@@ -12,3 +12,16 @@ Feature: Click on the next button on step 1
 
     Background:
         Given user is on the enrollment page
+    
+    @sep19-1 @smoke
+    Scenario: verify that user can click the next button with valid information
+        When user fills in all the fields with valid information
+        And user clicks on the next button
+        Then user should be navigated to payment plan section and see the payment plan stepper is "blue"  
+
+
+    @sep19-2 @smoke
+    Scenario: verify that user can click the next button with only required fields filled
+        When user fills in only the required fields with valid information
+        And user clicks on the next button
+        Then user should be navigated to payment plan section and see the payment plan stepper is "blue"
