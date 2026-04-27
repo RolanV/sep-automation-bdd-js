@@ -34,7 +34,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
     #* AC3: In the stepper, steps 1 and 2 should be green, and step 3 should be blue.
     Scenario: Verify after clicking next button, the Step3 stepper color is blue
         When user select "upfront" plan
-        And user clicks on the next button
+        And user clicks on the next button on the payment plan page
         Then the review step stepper circle is blue
         And the payment step circle is green
         And the start aplication stepper circle is green

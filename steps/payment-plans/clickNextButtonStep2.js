@@ -21,7 +21,7 @@ Then("the next button is enabled", async function () {
 });
 
 
-When("user clicks on the next button", async function () {
+When("user clicks on the next button on the payment plan page", async function () {
     await paymentPlanPage.clickNextButton();
 });
 
