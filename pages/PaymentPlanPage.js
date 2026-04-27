@@ -166,9 +166,15 @@ export class PaymentPlanPage extends BasePage {
 
     this.UpfrontText = page.locator("//span[@class='payment-type']");
 
+    this.upFrontTexy01 = page.locator("(//span[@class='payment-type'])[1]");
+
     this.upfrontPaymentOption01 = page.locator("//mat-expansion-panel-header[.//span[contains(@class,'payment-type') and contains(normalize-space(),'Upfront')]]");
 
     this.installmentPaymentOption01 = page.locator("//mat-expansion-panel-header[.//span[contains(@class,'payment-type') and contains(normalize-space(),'Installments')]]");
+
+    this.installmentsText = page.locator("span.payment-type", {hasText: "Installments"});
+
+
   }
 
   async selectPaymentPlan(paymentPlan) {
