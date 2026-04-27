@@ -1,4 +1,4 @@
-@sep10 @smoke
+@sep10 @regression
 Feature: Enter my Personal details
 
     As a customer, I should be able to enter my Personal details.
@@ -49,7 +49,7 @@ Feature: Enter my Personal details
         When user selects "LinkedIN" from the How did you hear about us dropdown
         Then the How did you hear about us dropdown should display "LinkedIN"
 
-    @sep10-9
+    @sep10-9 @smoke
     Scenario: Verify Next button is disabled when all required fields are empty
         Then the Next button should be disabled
 
@@ -93,8 +93,8 @@ Feature: Enter my Personal details
         And user enters "john.doe@gmail.com" into the Email Address field
         And user selects "LinkedIn" from the How did you hear about us dropdown
         Then the Next button should be disabled
-
-    @sep10-15
+ 
+    @sep10-15 @smoke
     Scenario: Verify Next button is disabled when Phone is invalid
         When user enters "John" into the First Name field
         And user enters "Doe" into the Last Name field
