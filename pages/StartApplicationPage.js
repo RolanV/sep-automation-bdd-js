@@ -42,6 +42,7 @@ export class StartApplicationPage extends BasePage {
       "//mat-label[text()='How did you hear about us?']",
     );
 
+
     this.emailOptionFromDropDown = page.locator(
       "//mat-option/span[contains(text(), 'Email')]",
     );
@@ -131,6 +132,8 @@ export class StartApplicationPage extends BasePage {
     );
     this.paymentPlanStepCircleText = page.locator("//div[.='Payment plan']");
     this.reviewStepCircleText = page.locator("//div[.='Review']");
+
+    this.phoneNumberInputBox_VerificationColor = page.locator('[formcontrolname="phoneNumber"]');
   }
 
   /**
