@@ -27,7 +27,7 @@ Feature: Display the product information
     Scenario:Verify that the product name on the information card matches the product name on the left side of the screen
         Then user should see that the product name on the information card matches the product name on the left side of the screen
 
-    @sep09-3
+    @sep09-3 @smoke
     #* AC3: The price of the product should be displayed.
     Scenario:Verify that the price of the product is displayed
         Then user should see the price of the product displayed on the information card

@@ -20,7 +20,7 @@ Feature: Click on the next button on step 1
         Then user should be navigated to payment plan section and see the payment plan stepper is "blue"  
 
 
-    @sep19-2 @smoke
+    @sep19-2 @regression
     Scenario: verify that user can click the next button with only required fields filled
         When user fills in only the required fields with valid information
         And user clicks on the next button

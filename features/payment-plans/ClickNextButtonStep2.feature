@@ -1,4 +1,4 @@
-@sep16
+@sep16 @regression
 Feature: Click on the next button on payment plans page   #! Test Only
 
     As a customer, I should be able to click on the next button on step 2 when I select a plan.
@@ -16,7 +16,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
         Given user is on the enrollment page
         And user completed the start application step
 
-    @sep16-1 @regression @smoke
+    @sep16-1 @smoke
     #* AC1: Clicking on any plan should activate the next button
     Scenario Outline: Verify that clicking on any payment plan should activate the next button
         Then the next button is disabled by default
@@ -29,7 +29,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
             | Installments |
 
 
-    @sep16-2 @regression
+    @sep16-2 @smoke
     #* AC2: When the customer clicks on the next button, the Step 3 page should be displayed.
     #* AC3: In the stepper, steps 1 and 2 should be green, and step 3 should be blue.
     Scenario: Verify after clicking next button, the Step3 stepper color is blue
@@ -40,7 +40,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
         And the start aplication stepper circle is green
 
 
-    @sep16-3 @regression
+    @sep16-3
     #* AC4: The payment component should be displayed.
     #* AC5: A price summary should be displayed.
     Scenario: Veridy that payment component should be displayed
@@ -50,7 +50,7 @@ Feature: Click on the next button on payment plans page   #! Test Only
         Then the installments payment plan summary is displayed
 
 
-    @sep16-4 @regression @smoke
+    @sep16-4
     #* AC6: The back button should be displayed and enabled.
     Scenario: Verify that back button should be displayed and enabled.
         Then the back button is displayed and enabled
