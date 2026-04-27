@@ -131,6 +131,8 @@ export class StartApplicationPage extends BasePage {
     );
     this.paymentPlanStepCircleText = page.locator("//div[.='Payment plan']");
     this.reviewStepCircleText = page.locator("//div[.='Review']");
+
+    this.phoneNumberInputBox_VerificationColor = page.locator('[formcontrolname="phoneNumber"]');
   }
 
   /**
