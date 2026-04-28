@@ -3,6 +3,7 @@ import { chromium, firefox, webkit } from "@playwright/test";
 import { initElements } from "../globalPagesSetup.js";
 import fs from 'fs';
 import path from 'path';
+import { tr } from "@faker-js/faker";
 
 const BROWSER_TYPE = "chrome";
 const HEADLESS_MODE = true;
