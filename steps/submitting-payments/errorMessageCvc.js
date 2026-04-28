@@ -5,10 +5,10 @@ import { productInfo } from "../../utilities/qa-data-reader.js";
 
 When("user types an incorrect or short CVC number", async function () {
     reviewPaymentPage.enterCVC("12");
+    reviewPaymentPage.enterZipCode("12")
 });
 
 Then("user should see error message {string}", async function (errorMessage) {
-    await reviewPaymentPage.termsAndConditionsCheckbox.click();
     let actualErrorMessage = await reviewPaymentPage.cardCVCErrorMessage.textContent();
     await expect (actualErrorMessage.trim()).toBe(errorMessage);
 });
