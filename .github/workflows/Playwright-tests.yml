@@ -1,0 +1,61 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    - cron: "0 23 * * *" # Runs at 23:00 UTC (6 PM EST)
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest # Virtual Machine (macos-latest, windows-latest, ubuntu-latest etc.)
+    permissions:
+      contents: write
+
+    # Set up NodeJS version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      # Install Dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Install Playwright Chromium Browser
+      - name: Install Playwright Chrome
+        run: npx playwright install --with-deps chromium
+
+      # configuring environment variables Example:
+      - name: Configure environment variables from secrets
+        run: |
+          echo "SEP_USERNAME=${{ secrets.SEP_USERNAME }}" >> $GITHUB_ENV
+          echo "SEP_PASSWORD=${{ secrets.SEP_PASSWORD }}" >> $GITHUB_ENV
+          echo "SEP_QA_URL=${{ secrets.SEP_QA_URL }}" >> $GITHUB_ENV
+
+
+      # Running tests with Playwright (Cucumber integration)
+      - name: Run Playwright tests
+        run: npm run test
+
+      # Generating Cucumber HTML report
+      - name: Upload Cucumber HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: reports/
+          retention-days: 30

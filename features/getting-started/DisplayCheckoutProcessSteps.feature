@@ -12,3 +12,12 @@ Feature: Display the steps of the checkout process
 
     Background:
         Given user is on the enrollment page
+    
+    @sep08-1 @regression
+    Scenario:Verify that system should Display the steps of the checkout process
+        Then the system should display the steps of the checkout process as "Start Application", "Payment plan", and "Review"
+        And the system should highlight "step1" in "blue"
+        And the system should display "step2" and "step3" in "grey"
+    
+
+        

@@ -1,4 +1,5 @@
 import { BasePage } from "./BasePage.js";
+import { expect } from "@playwright/test";
 
 export class StartApplicationPage extends BasePage {
   /**
@@ -8,7 +9,7 @@ export class StartApplicationPage extends BasePage {
     super(page);
 
     this.startApplicationText = page.locator(
-      "(//div[@class = 'step-title'])[1]"
+      "(//div[@class = 'step-title'])[1]",
     );
 
     this.paymentPlanText = page.locator("(//div[@class = 'step-title'])[2]");
@@ -16,7 +17,7 @@ export class StartApplicationPage extends BasePage {
     this.reviewText = page.locator("(//div[@class = 'step-title'])[3]");
 
     this.startApplicationStepCircle = page.locator(
-      "(//*[@class='step-circle'])[1]"
+      "(//*[@class='step-circle'])[1]",
     );
 
     this.paymentPlanStepCircle = page.locator("(//*[@class='step-circle'])[2]");
@@ -24,108 +25,116 @@ export class StartApplicationPage extends BasePage {
     this.reviewStepCircle = page.locator("(//*[@class='step-circle'])[3]");
 
     this.firstNameInputBox = page.locator(
-      "//input[@formcontrolname='firstName']"
+      "//input[@formcontrolname='firstName']",
     );
 
     this.lastNameInputBox = page.locator(
-      "//input[@formcontrolname='lastName']"
+      "//input[@formcontrolname='lastName']",
     );
 
     this.emailInputBox = page.locator("//input[@formcontrolname='email']");
 
     this.phoneNumberInputBox = page.locator(
-      "//input[@formcontrolname='phoneNumber']"
+      "//input[@formcontrolname='phoneNumber']",
     );
 
     this.howDidYouHearAboutUsDropDown = page.locator(
-      "//mat-label[text()='How did you hear about us?']"
+      "//mat-label[text()='How did you hear about us?']",
     );
 
     this.emailOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Email')]"
+      "//mat-option/span[contains(text(), 'Email')]",
     );
 
     this.facebookOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Facebook')]"
+      "//mat-option/span[contains(text(), 'Facebook')]",
     );
 
     this.googleOption = page.locator(
-      "//mat-option/span[contains(text(), 'Google')]"
+      "//mat-option/span[contains(text(), 'Google')]",
     );
 
     this.instagramOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Instagram')]"
+      "//mat-option/span[contains(text(), 'Instagram')]",
     );
 
     this.linkedInOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'LinkedIN')]"
+      "//mat-option/span[contains(text(), 'LinkedIN')]",
     );
 
     this.twitterOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Twitter')]"
+      "//mat-option/span[contains(text(), 'Twitter')]",
     );
 
     this.referredByFriedOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Referred by a friend')]"
+      "//mat-option/span[contains(text(), 'Referred by a friend')]",
     );
 
     this.otherOptionFromDropDown = page.locator(
-      "//mat-option/span[contains(text(), 'Other')]"
+      "//mat-option/span[contains(text(), 'Other')]",
     );
 
     this.firstNameInputBoxForParents = page.locator(
-      "(//input[@formcontrolname='firstName'])[2]"
+      "(//input[@formcontrolname='firstName'])[2]",
     );
 
     this.lastNameInputBoxForParents = page.locator(
-      "(//input[@formcontrolname='lastName'])[2]"
+      "(//input[@formcontrolname='lastName'])[2]",
     );
 
     this.emailInputBoxForParents = page.locator(
-      "(//input[@formcontrolname='email'])[2]"
+      "(//input[@formcontrolname='email'])[2]",
     );
 
     this.phoneNumberInputBoxForParents = page.locator(
-      "(//input[@formcontrolname='phoneNumber'])[2]"
+      "(//input[@formcontrolname='phoneNumber'])[2]",
     );
 
     this.flexiblePaymentsPlanAvailableText = page.locator(
-      "//p[text() = 'Flexible payments plan available']"
+      "//p[text() = 'Flexible payments plan available']",
     );
 
     this.programStartDate = page.locator(
-      "//div[contains(text(), 'Program Start Date')]/b[@class='info-value']"
+      "//div[contains(text(), 'Program Start Date')]/b[@class='info-value']",
     );
 
     this.refundEndDate = page.locator("(//b[@class='info-value'])[2]");
 
     this.programNameOnInfoCard = page.locator(
-      "//p[@class='program-title primary-color']"
+      "//p[@class='program-title primary-color']",
     );
 
     this.programPrice = page.locator(
-      "//div[@class='col-sm']/b[@class = 'info-primary']"
+      "//div[@class='col-sm']/b[@class = 'info-primary']",
     );
 
     this.footer = page.locator(
-      "//p[@class = 'footer-text' and contains(text(), 'Need help?')]"
+      "(//p[@class = 'footer-text' and contains(text(), 'Need help?')])[1]",
     );
 
     this.nextButton = page.locator(
-      "//button[@class = 'next-button'][contains(text(), 'Next')]"
+      "//button[@class = 'next-button'][contains(text(), 'Next')]",
     );
 
     this.programBasePrice = page.locator("//span[@class='ng-star-inserted']/s");
 
     this.enterPersonalDetails = page.locator(
-      "//b[contains(.,'Enter personal details')]"
+      "//b[contains(.,'Enter personal details')]",
     );
 
     this.discountedPrice = page.locator("//b[@class='info-primary']");
 
     this.originalPrice = page.locator("//s[contains(.,'$')]");
 
-    
+    this.startApplicationStepCircleText = page.locator(
+      "//div[.='Start Application']",
+    );
+    this.paymentPlanStepCircleText = page.locator("//div[.='Payment plan']");
+    this.reviewStepCircleText = page.locator("//div[.='Review']");
+
+    this.phoneNumberInputBox_VerificationColor = page.locator(
+      '[formcontrolname="phoneNumber"]',
+    );
   }
 
   /**
@@ -187,4 +196,43 @@ export class StartApplicationPage extends BasePage {
   async clickNextButton() {
     await this.nextButton.click();
   }
+
+  /**
+   * @param {string} stepper  // step1, step2, step3
+   * @param {string} color    // blue, green, grey
+   * @param {string} cssProperty //border-top-color, background-color (default)
+   */
+
+  async verifyStepperColor(stepper, color, cssProperty = "background-color") {
+    // Step mapping
+    const steps = {
+      step1: this.startApplicationStepCircle,
+      step2: this.paymentPlanStepCircle,
+      step3: this.reviewStepCircle,
+    };
+
+    // Color mapping
+    const colors = {
+      blue: "rgb(1, 201, 255)",
+      green: "rgb(172, 245, 138)",
+      grey: "rgb(217, 226, 236)",
+    };
+
+    const stepKey = stepper.toLowerCase().trim();
+    const colorKey = color.toLowerCase().trim();
+
+    // validation (very important in real frameworks)
+    if (!steps[stepKey]) {
+      throw new Error(`Invalid step: ${stepper}`);
+    }
+
+    if (!colors[colorKey]) {
+      throw new Error(`Invalid color: ${color}`);
+    }
+
+    // Assertion
+    await expect(steps[stepKey]).toHaveCSS(cssProperty, colors[colorKey]);
+  }
+
+ 
 }
