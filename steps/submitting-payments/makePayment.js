@@ -5,7 +5,7 @@ import { productInfo } from "../../utilities/qa-data-reader.js";
 
 
 When('user types valid card information', async function () {
-    await reviewPaymentPage.enterCardNumber();
+    await reviewPaymentPage.enterCardNumber("4242424242424242");
 });
 
 When('user types valid expiration date', async function () {
