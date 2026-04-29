@@ -66,6 +66,9 @@ export class ReviewPaymentPage extends BasePage {
       "//u[normalize-space()='Terms and Conditions']"
     );
     this.payButton = page.locator("//button[@type='button']");
+
+    this.payButton01 = page.locator("//button[@type='button']/span");
+
     this.cardNumberErrorMessage = this.paymentFrame.locator(
       "//p[@id='Field-numberError' and @class='p-FieldError Error' and @role='alert']"
     );

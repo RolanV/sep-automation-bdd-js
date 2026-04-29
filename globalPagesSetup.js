@@ -2,6 +2,7 @@ import { LeftMainPage } from "./pages/LeftMainPage.js";
 import { PaymentPlanPage } from "./pages/PaymentPlanPage.js";
 import { StartApplicationPage } from "./pages/StartApplicationPage.js";
 import { ReviewPaymentPage } from "./pages/ReviewPaymentPage.js";
+import { ConfirmationPage } from "./pages/Confirmation.js";
 import { type } from "os";
 
 // Import OTHER PAGES CLASSES HERE IF NEEDED...
@@ -33,6 +34,11 @@ export let reviewPaymentPage;
 export let page;
 // ADD OTHER PAGE CLASS REFERENCES HERE...
 
+/**
+ * @type {import('./pages/Confirmation.js').ConfirmationPage}
+ * 
+ */
+export let confirmationPage;
 
 /**
  * Initializes the global page elements and instances for the automation framework.
@@ -46,6 +52,7 @@ export const initElements = (argPage) => {
     paymentPlanPage = new PaymentPlanPage(page);
     startApplicationPage = new StartApplicationPage(page);
     reviewPaymentPage = new ReviewPaymentPage(page);
+    confirmationPage = new ConfirmationPage(page);
     // INITIALIZE PAGE INSTANCES HERE IF NEEDED...
 
 

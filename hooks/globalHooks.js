@@ -6,7 +6,7 @@ import path from 'path';
 import { tr } from "@faker-js/faker";
 
 const BROWSER_TYPE = "chrome";
-const HEADLESS_MODE = true;
+const HEADLESS_MODE = false;
 const MAXIMIZED_WINDOW = true;
 const SLOW_MOTION_DELAY = 0; // slow mode in milliseconds
 const DEFAULT_TIMEOUT = 30000; // default timeout in milliseconds
