@@ -56,7 +56,15 @@ async function takeScreenshot(page, scenarioName) {
   fs.mkdirSync(screenshotsDir, { recursive: true });
 
   const currentDateTime = new Date().toISOString().replace(/[:T.]/g, '_').slice(0, -5);
-  const fileName = `${scenarioName.replace(/\s+/g, '_')}_${currentDateTime}.png`;
+  // Collapse every character that is not safe in a filename into "_". Scenario
+  // names contain quotes, colons, commas and "?", which are rejected by the
+  // GitHub Actions artifact upload (and are invalid on NTFS). Length is capped
+  // so long scenario titles cannot exceed the filesystem's per-name limit.
+  const safeName = scenarioName
+    .replace(/[^a-zA-Z0-9-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 120);
+  const fileName = `${safeName}_${currentDateTime}.png`;
   const filePath = path.join(screenshotsDir, fileName);
 
   await page.screenshot({ path: filePath, fullPage: true });
