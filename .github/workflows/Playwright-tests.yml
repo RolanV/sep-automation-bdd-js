@@ -1,29 +1,49 @@
-name: Playwright Tests
+name: CI
+
+# Two jobs:
+#
+#   static-validation  Offline. Installs from the lockfile and parses every
+#                      committed .js/.cjs file. Launches no browser and
+#                      contacts no application, so it needs no credentials and
+#                      runs on forked pull requests.
+#
+#   e2e                Runs the Cucumber suite against the QA environment in
+#                      headless Chromium. Requires the SEP_* repository
+#                      secrets; without them every scenario fails at the first
+#                      step with "Cannot navigate to invalid URL".
+#
+# NOTE: the e2e job runs the whole suite, which includes @sep23 "Make a
+# payment". That scenario submits a Stripe test card, so every run of this
+# workflow performs a payment against the QA environment. There is no
+# `schedule` trigger, so this only happens on an explicit push, pull request
+# or manual dispatch -- never unattended on a timer.
 
 on:
   push:
-    branches: # Trigger the workflow on push to main and develop branches
-      - main
-      - develop
-  pull_request: # Trigger the workflow on pull request to main and develop branches
     branches:
       - main
-      - develop
-  schedule:
-    - cron: "0 23 * * *" # Runs at 23:00 UTC (6 PM EST)
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
   workflow_dispatch:
 
-jobs:
-  test:
-    timeout-minutes: 60
-    # Pinned, not ubuntu-latest: the "latest" label moved to Ubuntu 26.04, which
-    # Playwright cannot install browser dependencies for yet, so
-    # `playwright install --with-deps` fails before any test runs.
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
+permissions:
+  contents: read
 
-    # Set up NodeJS version
+jobs:
+  static-validation:
+    name: Static validation (lockfile install + JS syntax)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # Defence in depth. No dependency in the current lockfile has an install
+      # script that fetches browsers, but this guard keeps that true if the
+      # dependency tree changes later.
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,31 +54,108 @@ jobs:
           node-version: 24
           cache: "npm"
 
-      # Install Dependencies
-      - name: Install dependencies
+      # Installs exactly the versions pinned in package-lock.json, which also
+      # verifies that package.json and the lockfile remain consistent.
+      - name: Install dependencies from lockfile
         run: npm ci
 
-      # Install Playwright Chromium Browser
-      - name: Install Playwright Chrome
+      # Parses every committed .js/.cjs file with Node's built-in syntax
+      # checker. --check parses only: no module is imported or executed, so no
+      # application code, fixture or step definition can run.
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          count=0
+          failed=0
+
+          # NUL-separated enumeration of tracked files, so paths containing
+          # spaces or other unusual characters are handled correctly. The
+          # pathspecs match nested directories as well as the repository root.
+          while IFS= read -r -d '' file; do
+            count=$((count + 1))
+            if node --check -- "$file"; then
+              echo "  ok      $file"
+            else
+              echo "::error file=$file::JavaScript syntax check failed"
+              failed=$((failed + 1))
+            fi
+          done < <(git ls-files -z -- '*.js' '*.cjs')
+
+          echo "---"
+          echo "Checked $count file(s); $failed failure(s)."
+
+          # A zero count means enumeration broke, not that the code is clean.
+          if [ "$count" -eq 0 ]; then
+            echo "::error::No tracked .js/.cjs files were found; file enumeration failed."
+            exit 1
+          fi
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+  e2e:
+    name: Cucumber E2E (headless Chromium)
+    needs: static-validation
+    # Pinned, not ubuntu-latest: the "latest" label moved to Ubuntu 26.04,
+    # which Playwright cannot install browser dependencies for, so
+    # `playwright install --with-deps` fails before any test runs.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies from lockfile
+        run: npm ci
+
+      - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      # configuring environment variables Example:
-      - name: Configure environment variables from secrets
+      # Fails fast with a clear message rather than letting all 47 scenarios
+      # fail one by one at `page.goto(undefined)`.
+      - name: Verify required secrets are present
+        env:
+          SEP_QA_URL: ${{ secrets.SEP_QA_URL }}
+          SEP_USERNAME: ${{ secrets.SEP_USERNAME }}
+          SEP_PASSWORD: ${{ secrets.SEP_PASSWORD }}
+        shell: bash
         run: |
-          echo "SEP_USERNAME=${{ secrets.SEP_USERNAME }}" >> $GITHUB_ENV
-          echo "SEP_PASSWORD=${{ secrets.SEP_PASSWORD }}" >> $GITHUB_ENV
-          echo "SEP_QA_URL=${{ secrets.SEP_QA_URL }}" >> $GITHUB_ENV
+          missing=0
+          for name in SEP_QA_URL SEP_USERNAME SEP_PASSWORD; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Repository secret $name is not set."
+              missing=1
+            else
+              echo "  ok  $name is set"
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Add the missing secrets under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
 
+      - name: Run Cucumber suite
+        env:
+          SEP_QA_URL: ${{ secrets.SEP_QA_URL }}
+          SEP_USERNAME: ${{ secrets.SEP_USERNAME }}
+          SEP_PASSWORD: ${{ secrets.SEP_PASSWORD }}
+        run: npm test
 
-      # Running tests with Playwright (Cucumber integration)
-      - name: Run Playwright tests
-        run: npm run test
-
-      # Generating Cucumber HTML report
-      - name: Upload Cucumber HTML report
+      - name: Upload Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
           path: reports/
           retention-days: 30
+          if-no-files-found: warn
