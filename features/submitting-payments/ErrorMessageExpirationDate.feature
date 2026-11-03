@@ -20,7 +20,7 @@ Feature: Error messages for the invalid expiration number
     @sep27-1
     Scenario: Verify that immediate error message should be thrown if the expiration number is too short or wrong
         When  user types an incorrect or short expiration number
-        Then user should see error message Your card’s expiration date is incomplete.
+        Then user should see error message Your expiration date is incomplete.
     
     @sep27-2
     Scenario: Verify that immediate error message should be thrown if the expiration year is in the past

@@ -16,10 +16,10 @@ Then('user should see error message Your card’s expiration year is in the past
 
 When('user types an incorrect or short expiration number', async function () {
    await reviewPaymentPage.enterExpiryDate("12");
-    reviewPaymentPage.enterZipCode("12");
+    await reviewPaymentPage.enterZipCode("12");
 });
 
-Then('user should see error message Your card’s expiration date is incomplete.', async function () {
+Then('user should see error message Your expiration date is incomplete.', async function () {
     const errorMessage = await reviewPaymentPage.cardExpiryErrorMessage.textContent();
-    expect(errorMessage).toBe("Your card’s expiration date is incomplete.");
+    expect(errorMessage).toBe("Your expiration date is incomplete.");
 });
