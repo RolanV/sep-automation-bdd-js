@@ -2,3 +2,8 @@ node_modules/
 /reports
 /blob-report/
 /playwright/.cache/
+
+# Local credentials - never commit. .env.example is the tracked template.
+.env
+.env.*
+!.env.example

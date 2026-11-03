@@ -6,9 +6,11 @@ import path from 'path';
 import { tr } from "@faker-js/faker";
 
 const BROWSER_TYPE = "chrome";
-const HEADLESS_MODE = true;
+// Headless by default (so CI and `npm test` are unchanged).
+// Watch a run in a real browser with:  HEADLESS=false SLOW_MO=500 npx cucumber-js --parallel 1
+const HEADLESS_MODE = process.env.HEADLESS !== "false";
 const MAXIMIZED_WINDOW = true;
-const SLOW_MOTION_DELAY = 0; // slow mode in milliseconds
+const SLOW_MOTION_DELAY = Number(process.env.SLOW_MO ?? 0); // slow mode in milliseconds
 const DEFAULT_TIMEOUT = 30000; // default timeout in milliseconds
 
 
