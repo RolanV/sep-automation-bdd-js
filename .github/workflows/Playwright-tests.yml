@@ -16,7 +16,10 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest # Virtual Machine (macos-latest, windows-latest, ubuntu-latest etc.)
+    # Pinned, not ubuntu-latest: the "latest" label moved to Ubuntu 26.04, which
+    # Playwright cannot install browser dependencies for yet, so
+    # `playwright install --with-deps` fails before any test runs.
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
