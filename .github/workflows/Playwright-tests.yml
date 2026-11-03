@@ -1,26 +1,42 @@
-name: Playwright Tests
+name: Static Validation
+
+# Offline validation only.
+#
+# This workflow deliberately does NOT launch a browser, install Chromium, run
+# Cucumber scenarios, or contact the application under test. The Gherkin
+# scenarios in this repository drive a third-party training application that
+# requires credentials, and one scenario submits a payment, so unattended
+# browser execution is disabled until an authorized non-production target is
+# confirmed. Only static checks that cannot reach the application run here.
 
 on:
   push:
-    branches: # Trigger the workflow on push to main and develop branches
-      - main
-      - develop
-  pull_request: # Trigger the workflow on pull request to main and develop branches
     branches:
       - main
-      - develop
-  schedule:
-    - cron: "0 23 * * *" # Runs at 23:00 UTC (6 PM EST)
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  # Manual runs are safe: this workflow performs static validation only.
   workflow_dispatch:
 
-jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest # Virtual Machine (macos-latest, windows-latest, ubuntu-latest etc.)
-    permissions:
-      contents: write
+# No step writes to the repository, so read access is sufficient.
+permissions:
+  contents: read
 
-    # Set up NodeJS version
+jobs:
+  static-validation:
+    name: Static validation (lockfile install + JS syntax)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # Defence in depth. No dependency in the current lockfile has an install
+      # script that fetches browsers, but this guard keeps that true if the
+      # dependency tree changes later.
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,31 +47,44 @@ jobs:
           node-version: 24
           cache: "npm"
 
-      # Install Dependencies
-      - name: Install dependencies
+      # Installs exactly the versions pinned in package-lock.json, which also
+      # verifies that package.json and the lockfile remain consistent.
+      - name: Install dependencies from lockfile
         run: npm ci
 
-      # Install Playwright Chromium Browser
-      - name: Install Playwright Chrome
-        run: npx playwright install --with-deps chromium
-
-      # configuring environment variables Example:
-      - name: Configure environment variables from secrets
+      # Parses every committed .js/.cjs file with Node's built-in syntax
+      # checker. --check parses only: no module is imported or executed, so no
+      # application code, fixture or step definition can run.
+      - name: Validate JavaScript syntax
+        shell: bash
         run: |
-          echo "SEP_USERNAME=${{ secrets.SEP_USERNAME }}" >> $GITHUB_ENV
-          echo "SEP_PASSWORD=${{ secrets.SEP_PASSWORD }}" >> $GITHUB_ENV
-          echo "SEP_QA_URL=${{ secrets.SEP_QA_URL }}" >> $GITHUB_ENV
+          set -euo pipefail
 
+          count=0
+          failed=0
 
-      # Running tests with Playwright (Cucumber integration)
-      - name: Run Playwright tests
-        run: npm run test
+          # NUL-separated enumeration of tracked files, so paths containing
+          # spaces or other unusual characters are handled correctly. The
+          # pathspecs match nested directories as well as the repository root.
+          while IFS= read -r -d '' file; do
+            count=$((count + 1))
+            if node --check -- "$file"; then
+              echo "  ok      $file"
+            else
+              echo "::error file=$file::JavaScript syntax check failed"
+              failed=$((failed + 1))
+            fi
+          done < <(git ls-files -z -- '*.js' '*.cjs')
 
-      # Generating Cucumber HTML report
-      - name: Upload Cucumber HTML report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-report
-          path: reports/
-          retention-days: 30
+          echo "---"
+          echo "Checked $count file(s); $failed failure(s)."
+
+          # A zero count means enumeration broke, not that the code is clean.
+          if [ "$count" -eq 0 ]; then
+            echo "::error::No tracked .js/.cjs files were found; file enumeration failed."
+            exit 1
+          fi
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
