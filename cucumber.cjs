@@ -1,7 +1,19 @@
+const fs = require("node:fs");
+const path = require("node:path");
+
+// Load a local .env if one exists, so credentials can come from a gitignored
+// file rather than only the VS Code integrated terminal. Values already in the
+// environment are NOT overwritten, so the shell keeps precedence. Nothing is
+// logged. Uses Node built-in loadEnvFile - no third-party package.
+const envFile = path.join(__dirname, ".env");
+if (fs.existsSync(envFile)) {
+  process.loadEnvFile(envFile);
+}
+
 /**
  * This configuration object is used to set up and customize the Cucumber.js testing framework.
  * It provides options for parallel execution, paths to feature files, step definitions, hooks,
- * report formats, snippet interface, and world parameters.
+ * report formats, and snippet interface.
  */
 module.exports = {
   
@@ -40,14 +52,6 @@ module.exports = {
      * @property {string} snippetInterface - The interface for generating snippets.
      */
     formatOptions: { snippetInterface: "async-await" },
-
-    /**
-     * Parameters to be passed to the world constructor.
-     * @type {object}
-     */
-    worldParameters: {
-      ...process.env,
-    },
   },
   
 };

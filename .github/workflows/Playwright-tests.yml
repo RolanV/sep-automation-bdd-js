@@ -1,13 +1,22 @@
-name: Static Validation
+name: CI
 
-# Offline validation only.
+# Two jobs:
 #
-# This workflow deliberately does NOT launch a browser, install Chromium, run
-# Cucumber scenarios, or contact the application under test. The Gherkin
-# scenarios in this repository drive a third-party training application that
-# requires credentials, and one scenario submits a payment, so unattended
-# browser execution is disabled until an authorized non-production target is
-# confirmed. Only static checks that cannot reach the application run here.
+#   static-validation  Offline. Installs from the lockfile and parses every
+#                      committed .js/.cjs file. Launches no browser and
+#                      contacts no application, so it needs no credentials and
+#                      runs on forked pull requests.
+#
+#   e2e                Runs the Cucumber suite against the QA environment in
+#                      headless Chromium. Requires the SEP_* repository
+#                      secrets; without them every scenario fails at the first
+#                      step with "Cannot navigate to invalid URL".
+#
+# NOTE: the e2e job runs the whole suite, which includes @sep23 "Make a
+# payment". That scenario submits a Stripe test card, so every run of this
+# workflow performs a payment against the QA environment. There is no
+# `schedule` trigger, so this only happens on an explicit push, pull request
+# or manual dispatch -- never unattended on a timer.
 
 on:
   push:
@@ -18,10 +27,8 @@ on:
     branches:
       - main
       - dev
-  # Manual runs are safe: this workflow performs static validation only.
   workflow_dispatch:
 
-# No step writes to the repository, so read access is sufficient.
 permissions:
   contents: read
 
@@ -88,3 +95,67 @@ jobs:
           if [ "$failed" -ne 0 ]; then
             exit 1
           fi
+
+  e2e:
+    name: Cucumber E2E (headless Chromium)
+    needs: static-validation
+    # Pinned, not ubuntu-latest: the "latest" label moved to Ubuntu 26.04,
+    # which Playwright cannot install browser dependencies for, so
+    # `playwright install --with-deps` fails before any test runs.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies from lockfile
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Fails fast with a clear message rather than letting all 47 scenarios
+      # fail one by one at `page.goto(undefined)`.
+      - name: Verify required secrets are present
+        env:
+          SEP_QA_URL: ${{ secrets.SEP_QA_URL }}
+          SEP_USERNAME: ${{ secrets.SEP_USERNAME }}
+          SEP_PASSWORD: ${{ secrets.SEP_PASSWORD }}
+        shell: bash
+        run: |
+          missing=0
+          for name in SEP_QA_URL SEP_USERNAME SEP_PASSWORD; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Repository secret $name is not set."
+              missing=1
+            else
+              echo "  ok  $name is set"
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Add the missing secrets under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Run Cucumber suite
+        env:
+          SEP_QA_URL: ${{ secrets.SEP_QA_URL }}
+          SEP_USERNAME: ${{ secrets.SEP_USERNAME }}
+          SEP_PASSWORD: ${{ secrets.SEP_PASSWORD }}
+        run: npm test
+
+      - name: Upload Cucumber report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: reports/
+          retention-days: 30
+          if-no-files-found: warn

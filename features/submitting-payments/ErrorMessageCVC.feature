@@ -16,5 +16,5 @@ Feature: Error message for the invalid CVC number
     @sep29-1
     Scenario: Verify user sees an error message when CVC number is too short
         When user types an incorrect or short CVC number
-        Then user should see error message "Your card’s security code is incomplete."
+        Then user should see error message "Your security code is incomplete."
     

@@ -6,9 +6,11 @@ import path from 'path';
 import { tr } from "@faker-js/faker";
 
 const BROWSER_TYPE = "chrome";
-const HEADLESS_MODE = true;
+// Headless by default (so CI and `npm test` are unchanged).
+// Watch a run in a real browser with:  HEADLESS=false SLOW_MO=500 npx cucumber-js --parallel 1
+const HEADLESS_MODE = process.env.HEADLESS !== "false";
 const MAXIMIZED_WINDOW = true;
-const SLOW_MOTION_DELAY = 0; // slow mode in milliseconds
+const SLOW_MOTION_DELAY = Number(process.env.SLOW_MO ?? 0); // slow mode in milliseconds
 const DEFAULT_TIMEOUT = 30000; // default timeout in milliseconds
 
 
@@ -54,7 +56,15 @@ async function takeScreenshot(page, scenarioName) {
   fs.mkdirSync(screenshotsDir, { recursive: true });
 
   const currentDateTime = new Date().toISOString().replace(/[:T.]/g, '_').slice(0, -5);
-  const fileName = `${scenarioName.replace(/\s+/g, '_')}_${currentDateTime}.png`;
+  // Collapse every character that is not safe in a filename into "_". Scenario
+  // names contain quotes, colons, commas and "?", which are rejected by the
+  // GitHub Actions artifact upload (and are invalid on NTFS). Length is capped
+  // so long scenario titles cannot exceed the filesystem's per-name limit.
+  const safeName = scenarioName
+    .replace(/[^a-zA-Z0-9-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 120);
+  const fileName = `${safeName}_${currentDateTime}.png`;
   const filePath = path.join(screenshotsDir, fileName);
 
   await page.screenshot({ path: filePath, fullPage: true });
